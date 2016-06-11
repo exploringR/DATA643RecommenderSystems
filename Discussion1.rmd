@@ -44,7 +44,7 @@ Help them accomplish these goals by providing a recommender system that will sug
 11) Search terms entered in Netflix search feature by subscribers
 12) Demographics, Language, Location
 
-# High Level Algorithm
+## High Level Algorithm
 
 Netflix has a recommendation system that trains its systems with the movies watched by the user. So once a customer watches a movie. It looks in its inventory and finds out the similarities between them. So it maintains matrices like movies watched by the customer and the inventory. So we can say that it uses collaborative filtering for the recommendation. We know that the collaborative filtering is time consuming, but in this case we don't need a recommendation in seconds. So this algorithm goes well with application like Netflix where it targets the best suggestion for the customer. Also to be noted here the recommendation is ordered with most recent watched categories.
 
