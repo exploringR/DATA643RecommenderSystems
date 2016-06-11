@@ -1,0 +1,66 @@
+---
+title: "Scenario Analysis for Netflix"
+author: "Shipra Ahuja,Nathan Groom,Saheli Kar"
+date: "June 10, 2016"
+output: html_document
+---
+
+# Scenario Design Analysis
+
+## Recommender System Website
+
+Movie and Television Series Streaming Site - Netflix
+
+## Who are your Target Users?
+
+It's a very broad target. 
+
+The two main target users are: people that enjoy watching movies and TV in their leisure time, and people that have a means to stream their product. 
+
+This means having a smartphone, tablet, laptop or "smart" TV. This is almost everyone (in America at least). The price, about $8 per month, is very reasonable as well, and since many people can be on each account, not everyone who uses the service has to pay for it themselves. 
+
+## What are their key goals?
+
+Their key goal is to have access to as many quality movies and TV programs as possible for the monthly subscription price. Each user also wants to be able to know which of the thousands of titles available they will enjoy most at any given time. This is what the recommender system is for. Also, they want the platform to be reliable, provide high quality video, and be easy to use.
+
+## How can you help them accomplish their goals?
+
+Help them accomplish these goals by providing a recommender system that will suggest personalized titles based on what each user is most likely to enjoy, based on his or her preferred genre, how new/fresh the title is on the platform, and how popular the title is generally. Each account also takes into consideration the different people who use the account (i.e. kids, mom, dad in a certain family). 
+
+# Reverse Engineering
+
+## Data Used by Netflix as input for recommending movies
+
+1) User Ratings
+2) Hourly, daily, weekly, Monthly Popularity of the movie
+3) Popularity of movie based on region
+4) Duration of movie
+5) Time of the movie has been watched
+6) Device on whic movie has been played
+7) Actors and Director of the movie 
+8) Movie Genre, Parental Rating and Reviews
+9) Members interactions with movies recommended such as scrolls, mouse overs, rated, viewed, clicked, time spent on a given page
+10) Social data - movies watched by connected friends
+11) Search terms entered in Netflix search feature by subscribers
+12) Demographics, Language, Location
+
+# High Level Algorithm
+
+Netflix has a recommendation system that trains its systems with the movies watched by the user. So once a customer watches a movie. It looks in its inventory and finds out the similarities between them. So it maintains matrices like movies watched by the customer and the inventory. So we can say that it uses collaborative filtering for the recommendation. We know that the collaborative filtering is time consuming, but in this case we don't need a recommendation in seconds. So this algorithm goes well with application like Netflix where it targets the best suggestion for the customer. Also to be noted here the recommendation is ordered with most recent watched categories.
+
+```
+For each show in inventory, I1
+  For each Customer C who watched I1
+    For each show I2 watched by customer C
+      Record that a customer watched I1 and I2
+  For each show I2
+    Compute the similarity between I1 and I2
+```
+
+# Recommendations to improve the site's recommendation capabilities
+
+It has a "recently added" category about 5 or 6 rows down, but it doesn't seem to be in really chronological order. I wish you could see the newest things on Netflix, that aren't personalized, because a lot of the times you get the same recommendations in this row as you do in the primary "recommended for you" row. 
+
+I wish there was a way to switch between the user profiles within the account. The way it currently is, we're getting kids' shows along with more adult programming, clearly recommendations for multiple family members are side by side, more or less at random. I think there's a way to address who's watching in some other platforms (like Xbox or Apple TV app) but the mobile app doesn't have this to my knowledge. 
+
+I feel like the 5 star rating system shouldn't be relied on too heavily because I don't think many people rate shows. And, like other 5 star rating systems like Amazon or Yelp, I suspect (though not sure) that there are more 1 and 5 star (extreme) ratings than "honest" star rating opinions. Either way, I don't think this 5 star rating system is very useful in the Netflix context is but I don't really know what the solution is to this, so maybe someone can give some input.
