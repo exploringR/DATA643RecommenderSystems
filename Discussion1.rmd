@@ -1,5 +1,5 @@
 ---
-title: "Scenario Analysis for Netflix"
+title: "Scenario Design Analysis for Netflix"
 author: "Shipra Ahuja,Nathan Groom,Saheli Kar"
 date: "June 10, 2016"
 output: html_document
@@ -32,16 +32,27 @@ Help them accomplish these goals by providing a recommender system that will sug
 ## Data Used by Netflix as input for recommending movies
 
 1) User Ratings
+
 2) Hourly, daily, weekly, Monthly Popularity of the movie
+
 3) Popularity of movie based on region
+
 4) Duration of movie
+
 5) Time of the movie has been watched
+
 6) Device on whic movie has been played
+
 7) Actors and Director of the movie 
+
 8) Movie Genre, Parental Rating and Reviews
+
 9) Members interactions with movies recommended such as scrolls, mouse overs, rated, viewed, clicked, time spent on a given page
+
 10) Social data - movies watched by connected friends
+
 11) Search terms entered in Netflix search feature by subscribers
+
 12) Demographics, Language, Location
 
 ## High Level Algorithm
