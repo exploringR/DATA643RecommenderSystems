@@ -1,0 +1,37 @@
+---
+title: "Discussion 2"
+author: "Shipra Ahuja"
+date: "June 23, 2016"
+output: html_document
+---
+
+I saw the video from the Recsys 2015 conference  titled  "Recsys 2015 Session 5a News and Media" where Mr Andrii Maksai has spoken about the problem the newpaper websites face wherein the readers come from google news to a particular newspaper site, read one article and disappear from there. The aim of those newpaper websites is to provide very strong personalized recommendations to readers to have them visit their site over and over again for reading personalized news articles. Hence, they build various recommendation algorithms to provide the most optimized recommendations to users.
+
+Here is the video link - 
+
+https://www.youtube.com/watch?v=m-BSIVT8Wrg&index=11&list=PLaZufLfJumb_EWKKxZatnLNinoVQ94uXe
+
+1) The speaker has provided an overview of how the different algorithms can be evaluated based on various evaluation metrics to judge which one is better than the other.
+
+He said the best way is to perform the online testing to see how users behavior is to the recommended news articles but it's a very cumbersome and expensive way of evaluating each algorithm.
+
+Instead, he says that working with offline data to see user behavior is a much better and inexpensive way to evaluate algorithms. He talked about various metrics such as accuracy, serendipity, novelty, diversity and coverage which could be used to evaluate every single recommendation algorithm.
+
+So different algorithms are taken, evaluated using evaluation metrics by getting offline data about user behavior  and then a regression model is made to predict the click-thru-rate of the offline performance.
+
+He states that only coverage and serendipity are correlated when plotted as a scatter plot and none of the other evaluation metrics are correlated together.
+
+An example was described that Swissinfo, Le Point (French News Magazine) and Yahoo public data was captured and evaluation metrics were recorded.
+
+The most important take away from this video I feel is to measure the performance metrics of different algorithms on offline data and then apply regression model to predict the click-thru rates.
+
+2) How evaluation metrics can be implemented to find the best recommender algorithm
+
+Various evaluation metrics such as RMSE can be used to score the algorithm. RMSE measures the distance between predicted preferences and true preferences over items.
+
+Mean Square Error (which is equivalent to RMSE) and Mean Average Error (MAE), and Normalized Mean Average Error (NMAE) can be used as evaluation metrics. RMSE tends to penalize larger errors more severely than the other metrics, while NMAE normalizes MAE by the range of the ratings for ease of comparing errors across domains.
+
+Precision- Recall method computes the portion of favored items that were suggested.
+
+It should aggregate the hidden ratings from the test set into a set of user-item pairs, generate a ranked list of user-item pairs by combining the recommendation lists for the test users, and then compute the precision-recall or ROC curve on this aggregated data.
+
