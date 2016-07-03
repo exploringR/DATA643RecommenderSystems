@@ -1,0 +1,164 @@
+---
+title: "Project3"
+author: "Shipra Ahuja"
+date: "July 3, 2016"
+output: html_document
+---
+
+# Introduction
+
+This project uses restaurants dataset and a features dataset to implement SVD in the context of a recommeder system. 
+The first dataset the restaurant dataset wherein there are 1200 restaurants of New york city and each restaurant has many feature codes associated with it.
+The second dataset is the features dataset which has 256 feature codes and each feature code has a unique description of the feature.
+
+The datasets have been read into R and then a matrix has been created to assign scores for each feature code of a restaurant using random number sampling.
+
+Therefore, a matrix of dimensions 1200 x 256 has been created containing various scores for different features of every restaurant.
+
+Single Value Decomposition has been performed on this matrix to obtain the Diagonal, Left Singular and right Singular Matrix.
+
+Dot Product of Left singular and Right Singular Matrix has been taken to create the recommender system.
+
+
+# Code in R
+
+```{r,warning=FALSE}
+
+# Read the restaurants dataset with the feature codes
+restaurant.data<- read.csv("\\cuny\\ny_features.csv")
+
+# Read the feature code descriptions
+features.data<- read.csv("\\cuny\\features.txt", header = FALSE, sep = "\t")[,2]
+
+# Extract restaurant names
+restaurant.name=restaurant.data[,1]
+
+# Extract all features codes 
+restaurant.data<- restaurant.data[,2:ncol(restaurant.data)]
+
+# Create a blank matrix to hold feature code scores
+restaurant.score.matrix<- matrix(1, nrow=nrow(restaurant.data), ncol=257)
+
+# Assign row names to the matrix
+rownames(restaurant.score.matrix) = restaurant.name
+
+# Assign colnames to the matrix
+colnames(restaurant.score.matrix) = features.data
+
+# Populate the scores for the feature codes using random numbers
+
+for(i in 1:nrow(restaurant.score.matrix)){
+  features<- na.omit(as.numeric(restaurant.data[i,]))
+  for(j in 1: length(features)){
+    restaurant.score.matrix[i, features[j]+1]=sample(2:10, 1)
+  }
+}
+
+write.table(restaurant.score.matrix, "Restaurant_score.txt", sep = ' ')
+
+# Perform SVD on the matrix
+s <- svd(restaurant.score.matrix)
+
+# Get the diagonal matrix
+D <- s$d
+
+# Get the left singular matrix
+U <- s$u
+
+# Get the right singular matrix
+V <- s$v
+
+# Compute the dot product
+dotpdt <- U %*% V
+
+# Create the recommendation system
+
+r <- as(dotpdt, "realRatingMatrix")
+
+reco.model <- Recommender(r[1:nrow(r)],method="UBCF",param=list(method="Cosine",k=30))
+
+rest.pred <- predict(reco.model,r[1:nrow(r)],n=5,type="ratings")
+
+
+```
+
+
+# Code in Scala
+
+package org.scala.spark
+import org.apache.spark.SparkContext
+import org.apache.spark.SparkConf
+import org.apache.spark.SparkContext._
+import org.apache.spark.rdd.RDD
+import java.io.PrintWriter
+import org.apache.spark.mllib.linalg.Vectors
+import org.apache.spark.mllib.linalg.Matrix
+import org.apache.spark.mllib.linalg.Vector
+import org.apache.spark.mllib.linalg.distributed.RowMatrix
+import org.apache.spark.mllib.linalg.SingularValueDecomposition
+
+object svd  {
+
+def main(args: Array[String]): Unit = {
+
+val spConfig = (new SparkConf).setMaster("local").setAppName("SparkSVDDemo")
+val sc = new SparkContext(spConfig)
+
+// Load and parse the data file.
+
+val rows = sc.textFile("C:\\Users\\sonatushi\\Google Drive\\CUNY Data Analytics\\IS643-RECOSYS_\\Project3\\Restaurant_score.txt").map { line =>
+
+val values = line.split('\t').map(_.toDouble)
+Vectors.dense(values)
+
+}
+
+
+val mat = new RowMatrix(rows)
+
+mat.rows.foreach (println)
+
+// Compute SVD
+
+val svd = mat.computeSVD(mat.numCols().toInt, computeU = true)
+val U: RowMatrix = svd.U
+val s: Vector = svd.s
+val V: Matrix = svd.V
+
+println("Left Singular vectors :")
+
+U.rows.foreach(println)
+
+var rdd = U.rows.map( x => x.toArray.mkString(","))
+
+exportRowMatrix(rdd, "C:\\Users\\sonatushi\\Google Drive\\CUNY Data Analytics\\IS643-RECOSYS_\\Project3\\U-matrix.csv")
+
+println("Singular values are :")
+println(s)
+println("Right Singular vectors :")
+println(V)
+println("Matrix product :")
+
+val U_mult_V:RowMatrix= U.multiply(V)
+rdd = U_mult_V.rows.map( x => x.toArray.mkString(","))
+
+exportRowMatrix(rdd, "C:\\Users\\sonatushi\\Google Drive\\CUNY Data Analytics\\IS643-RECOSYS_\\Project3\\Result_matrix.csv")
+
+//U_mult_V.rows.foreach(println)
+
+sc.stop
+
+}
+
+def exportRowMatrix(matrix:RDD[String], fileName: String) = {
+
+    val pw = new PrintWriter(fileName)
+
+    matrix.collect().foreach(line => pw.println(line))
+
+    pw.flush
+    pw.close
+
+  }
+
+}
