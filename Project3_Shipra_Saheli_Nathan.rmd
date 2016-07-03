@@ -85,16 +85,28 @@ rest.pred <- predict(reco.model,r[1:nrow(r)],n=5,type="ratings")
 
 # Code in Scala
 
+```{r,warning=FALSE}
+
 package org.scala.spark
+
 import org.apache.spark.SparkContext
+
 import org.apache.spark.SparkConf
+
 import org.apache.spark.SparkContext._
+
 import org.apache.spark.rdd.RDD
+
 import java.io.PrintWriter
+
 import org.apache.spark.mllib.linalg.Vectors
+
 import org.apache.spark.mllib.linalg.Matrix
+
 import org.apache.spark.mllib.linalg.Vector
+
 import org.apache.spark.mllib.linalg.distributed.RowMatrix
+
 import org.apache.spark.mllib.linalg.SingularValueDecomposition
 
 object svd  {
@@ -102,6 +114,7 @@ object svd  {
 def main(args: Array[String]): Unit = {
 
 val spConfig = (new SparkConf).setMaster("local").setAppName("SparkSVDDemo")
+
 val sc = new SparkContext(spConfig)
 
 // Load and parse the data file.
@@ -109,6 +122,7 @@ val sc = new SparkContext(spConfig)
 val rows = sc.textFile("C:\\Users\\sonatushi\\Google Drive\\CUNY Data Analytics\\IS643-RECOSYS_\\Project3\\Restaurant_score.txt").map { line =>
 
 val values = line.split('\t').map(_.toDouble)
+
 Vectors.dense(values)
 
 }
@@ -121,8 +135,11 @@ mat.rows.foreach (println)
 // Compute SVD
 
 val svd = mat.computeSVD(mat.numCols().toInt, computeU = true)
+
 val U: RowMatrix = svd.U
+
 val s: Vector = svd.s
+
 val V: Matrix = svd.V
 
 println("Left Singular vectors :")
@@ -134,12 +151,17 @@ var rdd = U.rows.map( x => x.toArray.mkString(","))
 exportRowMatrix(rdd, "C:\\Users\\sonatushi\\Google Drive\\CUNY Data Analytics\\IS643-RECOSYS_\\Project3\\U-matrix.csv")
 
 println("Singular values are :")
+
 println(s)
+
 println("Right Singular vectors :")
+
 println(V)
+
 println("Matrix product :")
 
 val U_mult_V:RowMatrix= U.multiply(V)
+
 rdd = U_mult_V.rows.map( x => x.toArray.mkString(","))
 
 exportRowMatrix(rdd, "C:\\Users\\sonatushi\\Google Drive\\CUNY Data Analytics\\IS643-RECOSYS_\\Project3\\Result_matrix.csv")
@@ -162,3 +184,5 @@ def exportRowMatrix(matrix:RDD[String], fileName: String) = {
   }
 
 }
+
+```
