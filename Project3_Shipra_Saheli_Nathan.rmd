@@ -7,28 +7,26 @@ output: html_document
 
 # Introduction
 
-This project uses restaurants dataset and a features dataset to implement SVD in the context of a recommeder system. 
-The first dataset the restaurant dataset wherein there are 1200 restaurants of New york city and each restaurant has many feature codes associated with it.
-The second dataset is the features dataset which has 256 feature codes and each feature code has a unique description of the feature.
+This project uses data from 1200 restaurants in New York City to demonstrate how singular value decomposition can be implemented in the context of a recommender system. Each restaurant in the data is associated with a number of different feature codes. Each of these codes represent with one of 256 descriptive features detailed in a separate dataset. These features can be the kind of food served (i.e. "Sushi") or another quality of the restaurant (i.e. "good for kids", "open late", etc.).
 
-The datasets have been read into R and then a matrix has been created to assign scores for each feature code of a restaurant using random number sampling.
+These datasets have been read into R and a matrix has been created to assign scores between 1 and 10 for each feature code of a restaurant using random number sampling. Therefore each feature of each restaurant has an individual rating.
 
-Therefore, a matrix of dimensions 1200 x 256 has been created containing various scores for different features of every restaurant.
+The created matrix therefore has dimensions of 1200 x 256, and each cell contains either a rating between 1 and 10 if that restaurant has that specific feature, or a 0 otherwise.
 
-Single Value Decomposition has been performed on this matrix to obtain the Diagonal, Left Singular and right Singular Matrix.
-
-Dot Product of Left singular and Right Singular Matrix has been taken to create the recommender system.
+Singular Value Decomposition is then performed on this matrix to obtain the Diagonal, Left Singular, and Right Singular matrices. 
 
 
 # Code in R
 
 ```{r,warning=FALSE}
 
+suppressPackageStartupMessages(library(recommenderlab))
+
 # Read the restaurants dataset with the feature codes
-restaurant.data<- read.csv("\\cuny\\ny_features.csv")
+restaurant.data<- read.csv("ny_features.csv")
 
 # Read the feature code descriptions
-features.data<- read.csv("\\cuny\\features.txt", header = FALSE, sep = "\t")[,2]
+features.data<- read.csv("features.txt", header = FALSE, sep = "\t")[,2]
 
 # Extract restaurant names
 restaurant.name=restaurant.data[,1]
@@ -56,6 +54,44 @@ for(i in 1:nrow(restaurant.score.matrix)){
 
 write.table(restaurant.score.matrix, "Restaurant_score.txt", sep = ' ')
 
+# Histogram showing count restaurants with various feature scores
+
+library(ggplot2)
+
+# Read the score file
+rest_score <- read.csv("\\cuny\\Restaurant_score.csv",header=TRUE)
+
+# Cleanup columns names
+colnames(rest_score)[163:166] <- c("Below $15","$15-$30","$30-$50","Over $50")
+
+# Remove duplicate columns
+rest_score <- rest_score[-c(167:172)]
+
+# Get the names of the restaurants
+ext_name <- rest_score[,1]
+
+# Get all columns with feature scores
+ext_scores <- rest_score[,2:252]
+
+# Get the mean of all rows
+Rowmeans <- apply(ext_scores,1,mean)
+
+df <- cbind(ext_name,ext_scores)
+
+```
+
+The histogram below shows that 350+  restaurants in New York city have an average feature score between 0.1-0.15.
+
+There are very few restaurants in New York city which have an average feature score between 0.3-0.5.
+
+Majority of the restaurants have an average feature score between 0.15-0.3.
+
+```{r,warning=FALSE}
+
+# Histogram showing count of restaurants with various feature scores
+
+ggplot(df,aes(Rowmeans)) + geom_histogram(bins=10,fill="orange") + ggtitle("Count of Restaurants with varied Feature Scores") + xlab("Feature score")
+
 # Perform SVD on the matrix
 s <- svd(restaurant.score.matrix)
 
@@ -79,13 +115,10 @@ reco.model <- Recommender(r[1:nrow(r)],method="UBCF",param=list(method="Cosine",
 
 rest.pred <- predict(reco.model,r[1:nrow(r)],n=5,type="ratings")
 
-
 ```
 
 
 # Code in Scala
-
-```{r,warning=FALSE}
 
 package org.scala.spark
 
@@ -119,7 +152,7 @@ val sc = new SparkContext(spConfig)
 
 // Load and parse the data file.
 
-val rows = sc.textFile("C:\\Users\\sonatushi\\Google Drive\\CUNY Data Analytics\\IS643-RECOSYS_\\Project3\\Restaurant_score.txt").map { line =>
+val rows = sc.textFile("Restaurant_score.txt").map { line =>
 
 val values = line.split('\t').map(_.toDouble)
 
@@ -148,7 +181,7 @@ U.rows.foreach(println)
 
 var rdd = U.rows.map( x => x.toArray.mkString(","))
 
-exportRowMatrix(rdd, "C:\\Users\\sonatushi\\Google Drive\\CUNY Data Analytics\\IS643-RECOSYS_\\Project3\\U-matrix.csv")
+exportRowMatrix(rdd, "U-matrix.csv")
 
 println("Singular values are :")
 
@@ -164,7 +197,7 @@ val U_mult_V:RowMatrix= U.multiply(V)
 
 rdd = U_mult_V.rows.map( x => x.toArray.mkString(","))
 
-exportRowMatrix(rdd, "C:\\Users\\sonatushi\\Google Drive\\CUNY Data Analytics\\IS643-RECOSYS_\\Project3\\Result_matrix.csv")
+exportRowMatrix(rdd, "Result_matrix.csv")
 
 //U_mult_V.rows.foreach(println)
 
@@ -185,4 +218,12 @@ def exportRowMatrix(matrix:RDD[String], fileName: String) = {
 
 }
 
-```
+
+
+### Output from Scala
+
+![Output from Scala](Scala_output.jpg)
+
+From the above result, it can be said that if someone chooses Afghan restaurant, The Stanhope will be recommended.
+
+
