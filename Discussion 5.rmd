@@ -5,7 +5,7 @@ date: "July 12, 2016"
 output: html_document
 ---
 
-# Graph Based MOvie Recommendation System
+# Graph Based Movie Recommendation System
 
 A graph based movie recommendation system can be built using the MovieLens dataset, graph database Neo4J and the graph traveral language Gremlin.
 Cypher Query Language can also be used to query the Neo4J database.
