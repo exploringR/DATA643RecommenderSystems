@@ -1,0 +1,51 @@
+---
+title: "Discussion 5"
+author: "Shipra Ahuja"
+date: "July 12, 2016"
+output: html_document
+---
+
+# Graph Based MOvie Recommendation System
+
+A graph based movie recommendation system can be built using the MovieLens dataset, graph database Neo4J and the graph traveral language Gremlin.
+Cypher Query Language can also be used to query the Neo4J database.
+
+# Graph Database Design
+
+The movielens dataset is parsed and can be represented as a graph.
+
+The graph database can be built as follows -
+
+Users - Nodes
+Occupations - Nodes
+Movie - Nodes
+Genre - Nodes
+
+Each of the nodes above can have attributes.
+
+Attributes of Users - User Id, Gender, Age 
+Attributes of Occupations - Sub-occupation, Designation
+Attributes of Movie - Name, Language, Duration
+Attributes of Genre - Genre
+
+Nodes can be connected by relationshsips
+
+User "works as" Occupation
+User "rated" the Movie
+Movie "belongs to" Genre
+
+Works as, Rated and Belongs to are relationships between various nodes.
+
+
+# Traversing the graph
+
+Once the MovieLens dataset is parsed and converted to a graph, the movie data can be queried using Cypher or Gremlin. 
+
+Recommendations can be obtained by building a graph traversal mechanism using collabaorative filtering based system or content based system or a hybrid of collaborative and content-based techniques.
+
+
+More details can be found on this page:
+
+https://markorodriguez.com/2011/09/22/a-graph-based-movie-recommender-engine/
+
+
